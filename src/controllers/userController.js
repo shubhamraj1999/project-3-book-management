@@ -64,7 +64,7 @@ const loginUser = async function (req, res) {
         if (!emailpasswordcheck) {
             return res.status(400).send({ status: false, message: ' please provide valid userId or password' });
         }
-        let token = jwt.sign({ userid: emailpasswordcheck._id.toString() }, "GroupNo55", { expiresIn: "2hr" })
+        let token = jwt.sign({ userid: emailpasswordcheck._id.toString() }, "GroupNo51", { expiresIn: "2hr" })
         res.status(201).send({
             status: true, message: "Sucessfull Login", data: { token: token }
 
