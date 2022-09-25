@@ -4,7 +4,7 @@ const validator = require('../validator/validator')
 
 const auth = async function (req, res, next) {
     try {
-        const token = req.headers["x-auth-key"];
+        const token = req.headers["x-api-key"];
         if (!token)
             return res.status(401).send({ status: false, msg: "Please provide token" });
                 
