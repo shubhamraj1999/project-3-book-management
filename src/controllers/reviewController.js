@@ -27,6 +27,7 @@ const createreview = async function (req, res) {
         }
 
         let ratingpattern = /^[1-5]$/;
+
         if (!validator.isValid(data)) {
             return res.status(400).send({ status: false, msg: "You have not provided any data" });
         }
@@ -156,7 +157,7 @@ const deleteReviewsById = async function (req, res) {
             return res.status(404).send({ status: false, msg: "review is not found for this ID" });
         }
 
-        if (review.bookId.toString() !== bookId) {
+        if (review.bookId !== bookId) {
             return res.status(404).send({ status: false, message: "Review not found for this book" });
         }
 

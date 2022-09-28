@@ -11,7 +11,7 @@
     "url": "git+https://github.com/shubhamraj1999/project-3-book-management.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Shubham raj",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/shubhamraj1999/project-3-book-management/issues"
@@ -20,6 +20,7 @@
   "dependencies": {
     "express": "^4.18.1",
     "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "mongoose": "^6.6.1",
     "nodemon": "^2.0.20",

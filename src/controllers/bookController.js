@@ -37,7 +37,7 @@ const createbook = async function (req, res) {
         ];
         for (field of requiredFields) {
             if (!req.body.hasOwnProperty(field)) {
-                return res .status(400).send({ status: false, msg: `${field}==>is required` });
+                return res .status(400).send({ status: false, msg: `${field}=>is required` });
                 }
         }
 
@@ -71,42 +71,7 @@ const createbook = async function (req, res) {
             return res .status(404).send({ status: false, msg: "this userId is not exists" });
             }
 
-        //............................Authorisation.......................................  
-        if (req.validToken.userId != userbyid._id.toString()) {
-            return res .status(403).send({ status: false, message: "You are Not Authorised" });
-            }
-
-        if (!validator.isValid(ISBN)) {
-            return res.status(400).send({ status: false, msg: "ISBN is invalid" });
-        }
-        let checkISBN = await bookModel.findOne({ ISBN: ISBN });
-        if (checkISBN) {
-            return res.status(400).send({ status: false,msg: `choose another ISBN number.${ISBN} is already exist` });
-               }
-
-        if (!validator.isValid(category)) {
-            return res.status(400).send({ status: false, msg: "category is invalid" });
-                }
-
-        if (!validator.isValid(subcategory)) {
-            return res.status(400).send({status: false, msg: "subcategory is invalid"});
-                }
-
-
-        //keys value validation can't use number in String
-        let letters = ["title", "excerpt"];
-        for (field of letters) {
-            if (!isNumberInString(req.body[field])) {
-                return res.status(400).send({ status: false, msg: `You can't use number in==>${field}`});
-                   
-                   
-               
-            }
-        }
-
-
-
-        let savedata = await bookModel.create(data);
+         let savedata = await bookModel.create(data);
         return res.status(201).send({ status: true, data: savedata });
     } catch (err) {
         res.status(500).send({ status: false, error: err.message });
@@ -147,7 +112,7 @@ const getBookByQuery = async function (req, res) {
         //sorting the title in alphabeical order with  the  help of lodash
         let sorted = lodash.sortBy(bookDetails, ["title"]);
 
-        return res.status(200) .send({ status: true, message: "Books list", data: sorted });
+        return res.status(200).send({ status: true, message: "Books list", data: sorted });
             
            
     } catch (err) {
@@ -182,7 +147,7 @@ const getBooksDetails = async function (req, res) {
         const data = verifyBookId.toObject();
         data["reviewsData"] = reviews;
 
-        return res.status(200) .send({ status: true, message: "Books List", data: data });
+        return res.status(200).send({ status: true, message: "Books List", data: data });
             
            
     } catch (error) {
@@ -192,7 +157,9 @@ const getBooksDetails = async function (req, res) {
 
 
 //=============================put api updateBook============================================
+
 const updatebook = async function (req, res) {
+    
     try {
         let bookId = req.params.bookId;
         if (!mongoose.Types.ObjectId.isValid(bookId)) {
@@ -203,20 +170,39 @@ const updatebook = async function (req, res) {
         }
 
         let book = await bookModel.findOne({ _id: bookId, isDeleted: false });
+       
         if (!book) {
             return res.status(404) .send({ status: false, msg: "Book is not found for this ID" });
-                
-               
-        }
+                }
+
         //...................Authorisation.........................................
-        if (req.validToken.userId !== book.userId.toString()) {
+       
+       
+        if (req.decode.userId != book.userId) {
             return res.status(403).send({status: false, msg: "you are not authorised for this operation"});
                 
                
             
         }
-
+     
         let data = req.body;
+         //.................checking if the value is empty string or not...........................
+         if (!data.title ) {
+            return res .status(400).send({ status: false, msg: "book title value is empty" });
+               
+                
+        }
+        if (!data.excerpt) {
+            return res.status(400).send({ status: false, msg: "book excerpt value is empty" });
+                
+                
+        }
+
+        if (!data.ISBN) {
+            return res  .status(400).send({ status: false, msg: "book ISBN Number field is empty" });
+              
+                
+        }
         if (data.title) {
             let uniquetitle = await bookModel.findOne({ title: data.title });
             if (uniquetitle) {
@@ -233,23 +219,7 @@ const updatebook = async function (req, res) {
                     
             }
         }
-        //.................checking if the value is empty string or not...........................
-        if (!validator.isValid.data.title ) {
-            return res .status(400).send({ status: false, msg: "book title value is empty" });
-               
-                
-        }
-        if (!validator.isValid.data.excerpt) {
-            return res.status(400).send({ status: false, msg: "book excerpt value is empty" });
-                
-                
-        }
-
-        if (!validator.isValid.data.ISBN) {
-            return res  .status(400).send({ status: false, msg: "book ISBN Number field is empty" });
-              
-                
-        }
+       
         //..........................updating the bookdocument....................................
         let updatedbook = await bookModel.findByIdAndUpdate(
             { _id: bookId },
@@ -275,9 +245,9 @@ const updatebook = async function (req, res) {
 //==========================delete api ==========================================
 
 const deleteBook = async function (req, res) {
-    let data = req.params.bookId;
+    let data = req.params.booksId;
 
-    if (!mongoose.Types.ObjectId.isValid(data)) {
+    if (!mongoose.Types.ObjectId.isValid(data)){
         return res.status(400).send({ status: false, msg: "BookId is incorrect" });
     }
 
@@ -293,7 +263,7 @@ const deleteBook = async function (req, res) {
             
     }
     //.............................Authorisation....................................
-    if (req.validToken.userId != verifyId.userId) {
+    if (req.decode.userId != verifyId.userId) {
         return res .status(403).send({ status: false, message: "You are Not Authorised" });
            
             
@@ -308,7 +278,7 @@ const deleteBook = async function (req, res) {
             },
         }
     );
-    return res.status(200) .send({ status: true, msg: "book is successfully deleted" });
+    return res.status(200).send({ status: true, msg: "book is successfully deleted" });
         
        
 };

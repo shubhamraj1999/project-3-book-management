@@ -21,10 +21,10 @@ router.get('/books' ,book.getBookByQuery)
 router.get('/books/:bookId',book.getBooksDetails)
 
 ///////////for updating books////////
-router.put('/books/:bookId',book.updatebook)
+router.put('/books/:bookId',authentication.auth,book.updatebook)
 
 /////////// for deleting books//////////
-router.delete('/books/:booksId',book.deleteBook)
+router.delete('/books/:booksId',authentication.auth,book.deleteBook)
 
 /////////////////for create review////////////
 router.post('/books/:bookId/review',review.createreview)

@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken')
-const validator = require('../validator/validator')
+
 
 
 const auth = async function (req, res, next) {
@@ -10,26 +10,15 @@ const auth = async function (req, res, next) {
                 
                 
         //........................verifying the token through Jwt..............................
-        let validToken = jwt.verify(
-            token,
-            "GroupNo51",
-            function (error, token) {
-                if (error) {
-                    return undefined;
-                } else {
-                    return token;
-                }
+        let validToken = jwt.verify(token,"GroupNo51",(err,decode)=>
+        {
+            if(err){
+                return res.status(400).send({status:false,message:'token is not correct'})
             }
-        );
-        if (!validator.isValid.validToken ) {
-            return res .status(401) .send({ status: false, msg: "please provide valid token in headers" });
-                }
-
-        // Passing the decoded token inside req to acces it in controllers for authorisation.
-
-        req.validToken = validToken;
-
-        next();
+            req.decode=decode
+            next()
+        });
+        
     } catch (error) {
         return res.status(500).send({ status: false, msg: error.message });
     }

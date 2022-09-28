@@ -11,7 +11,9 @@ let createUserDocument = async function (req, res) {
         let { title, name, phone, email, password, address, } = document
 
         if (Object.keys(document).length === 0) return res.status(400).send({ status: false, msg: "require data to create document" })
+
         let emailRegex = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/
+
         if (!title) return res.status(400).send({ status: false, msg: "title must be present" })
         if (!validator.isTitleValid(title)) return res.status(400).send({ status: false, msg: "title is not valid" })
 
@@ -36,10 +38,10 @@ let createUserDocument = async function (req, res) {
         if (isUniqueEmail) return res.status(400).send({ status: true, msg: "emailId id is already registerd" })
 
         if (!password) return res.status(400).send({ status: false, msg: "password is required" })
-        if (!password.match(/^(?=.?[A-Z])(?=.?[a-z])(?=.?[0-9])(?=.?[#?!@$%^&*-]).{8,15}$/))
+        if (!password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,15}$/))
             return res.status(400).send({ status: false, msg: "this is not valid password" })
 
-        if (!address) return res.status(400).send({ status: false, msg: "address is required" })
+       
 
 
         let savedData = await userModel.create(document)
@@ -64,7 +66,7 @@ const loginUser = async function (req, res) {
         if (!emailpasswordcheck) {
             return res.status(400).send({ status: false, message: ' please provide valid userId or password' });
         }
-        let token = jwt.sign({ userid: emailpasswordcheck._id.toString() }, "GroupNo51", { expiresIn: "2hr" })
+        let token = jwt.sign({ userId: emailpasswordcheck._id }, "GroupNo51", { expiresIn: "2hr" })
         res.status(201).send({
             status: true, message: "Sucessfull Login", data: { token: token }
 
